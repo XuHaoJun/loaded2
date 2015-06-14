@@ -94,7 +94,7 @@ static SDL_Window * window_ = (SDL_Window *)NULL;
  *
  *  @since  0.1.0
  **/
-Game game = 
+Game game =
 {
     game_init_,
     game_over_,
@@ -714,6 +714,16 @@ void collide_wings_(void)
             if (wings->health <= 0)
             {
                 wings->alive = false;
+                if (wings->num_life > 0) {
+                    wings->alive = true;
+                    wings->health = 100;
+                    int width;
+                    int height;
+                    SDL_GetWindowSize(window_, &width, &height);
+                    wings->position_.x = ((width - wings->sprite_->rect_.w) / 2);
+                    wings->position_.y = ((height / 2) + wings->sprite_->rect_.h);
+                    wings->num_life -= 1;
+                }
                 break;
             }
 
@@ -1182,7 +1192,7 @@ void game_loop_(void)
         while ((ticks - base) > 50)    // 如果流逝時間 > 50 ticks
         {
 
-            if (up) 
+            if (up)
             {
                 wings->position_.y -= 10;
             }
