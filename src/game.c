@@ -1074,6 +1074,21 @@ void game_start_(void)
     game_loop_();
 } // game_start_()
 
+#define TICK_INTERVAL    40
+
+static Uint32 next_time;
+
+Uint32 time_left(void)
+{
+    Uint32 now;
+
+    now = SDL_GetTicks();
+    if(next_time <= now)
+        return 0;
+    else
+        return next_time - now;
+}
+
 /**
  *  The main-loop of the game.  Game over when the loop ends.
  *
@@ -1086,8 +1101,7 @@ void game_loop_(void)
     Scene * scene = game.scene;
     Wings * wings = game.wings;
 
-    uint32_t base = SDL_GetTicks();
-    uint32_t ticks = 0;
+    next_time = SDL_GetTicks() + TICK_INTERVAL;
 
     bool up = false;
     bool down = false;
@@ -1187,41 +1201,37 @@ void game_loop_(void)
             } // esac
         } // od
 
-        ticks = SDL_GetTicks(); // 取得目前的時間，單位 ticks
 
-        while ((ticks - base) > 50)    // 如果流逝時間 > 50 ticks
+        if (up)
         {
+            wings->position_.y -= 10;
+        }
+        if (down)
+        {
+            wings->position_.y += 10;
+        }
+        if (left)
+        {
+            wings->position_.x -= 10;
+        }
+        if (right)
+        {
+            wings->position_.x += 10;
+        }
+        if (space)
+        {
+            init_laser_(scene);
+        }
+        update_lasers_(); // 移動 lasers 的位置
+        update_meteors_(); // 捲動 meteors 的位置
 
-            if (up)
-            {
-                wings->position_.y -= 10;
-            }
-            if (down)
-            {
-                wings->position_.y += 10;
-            }
-            if (left)
-            {
-                wings->position_.x -= 10;
-            }
-            if (right)
-            {
-                wings->position_.x += 10;
-            }
-            if (space)
-            {
-                init_laser_(scene);
-            }
-            update_lasers_(); // 移動 lasers 的位置
-            update_meteors_(); // 捲動 meteors 的位置
-
-            collide_lasers_();
-            collide_wings_();
-
-            base += 50;
-        } // od
+        collide_lasers_();
+        collide_wings_();
 
         update_();  // 更新畫面
+
+        SDL_Delay(time_left());
+        next_time += TICK_INTERVAL;
     } // od
 } // game_loop_()
 
