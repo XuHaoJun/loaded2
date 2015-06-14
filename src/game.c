@@ -1096,7 +1096,7 @@ void game_loop_(void) {
     if (space) {
       if (wings->shot_laser_next_time <= SDL_GetTicks()) {
         init_laser_(scene);
-        wings->shot_laser_next_time += 400;
+        wings->shot_laser_next_time = SDL_GetTicks() + 400;
       }
     }
     update_lasers_();   // 移動 lasers 的位置
