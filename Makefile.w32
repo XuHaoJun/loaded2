@@ -1,0 +1,111 @@
+
+#choose shell
+SHELL=sh
+
+#versioning
+MAJOR=0
+MINOR=1
+PATCH=0
+VERSION=$(MAJOR).$(MINOR).$(PATCH)
+
+PRJ=$(notdir $(CURDIR))
+
+SRC=src
+INC=inc
+OBJ=obj/bin
+DBJ=obj/dbg
+LIB=lib
+DXY=doxy
+BLD=bin
+BLD_NUM=build.number
+
+BIN=$(BLD)/$(PRJ).exe
+DBG=$(BLD)/$(PRJ)g.exe
+
+DC=doxygen
+
+INCLUDES=-I. -I$(INC) -Dmain=SDL_main
+#INCLUDES=-I. -I$(INC)
+#LIBS=
+#LIBS=-lpdcurses -lwinmm
+#LIBS=-lrt -lncursesw
+LIBS=$(SDL_LIBS) $(SDL_IMAGE) $(SDL_TTF)
+
+#LIBS=$(GTK_LIBS) -lstdc++
+
+CC=gcc
+
+CFLAGS= -std=c11 -O3 -Wall -Wextra -D_GNU_SOURCE -DNDEBUG $(VER_INFO) $(3RD_CFLAGS)
+CDEBUG= -std=c11 -g -O0 -Wall -Wextra -D_GNU_SOURCE $(VER_INFO) $(3RD_CFLAGS)
+
+LDFLAG= -L$(LIB)
+
+VER_FILE=$(SRC)/about.c
+
+VER_INFO= -DPRJ_NAME=$(PRJ) \
+          -DVER_MAJOR=$(MAJOR) \
+		  -DVER_MINOR=$(MINOR) \
+		  -DVER_PATCH=$(PATCH) \
+		  -DVER_BUILD=$(shell cat $(BLD_NUM)) \
+		  -DVER_BTIME=$(shell date +'%H:%M:%S') \
+		  -DVER_BDATE=$(shell date +'%m/%d/%Y')
+
+#SOURCES=$(filter-out $(SRC)/about.c, $(wildcard $(SRC)/*.c))
+SOURCES=$(wildcard $(SRC)/*.c)
+HEADERS=$(addprefix $(INC)/,$(notdir $(patsubst %.c,%.h,$(SOURCES))))
+OBJECTS=$(notdir $(patsubst %.c,%.o,$(SOURCES)))
+BIN_OBJS=$(addprefix $(OBJ)/,$(OBJECTS))
+DBG_OBJS=$(addprefix $(DBJ)/,$(OBJECTS))
+
+# SDL setting
+SDL_LIBS=-lmingw32 -lSDL2Main -lSDL2 -lwinmm -mwindows
+#SDL_IMAGE=-lSDL2_image -ltiff -ljpeg -lpng -lz
+SDL_IMAGE=-lSDL2_image
+#SDL_TTF=-lSDL2_ttf -lfreetype
+SDL_TTF=
+
+# pkg-config --cflags
+#3RD_CFLAGS=$(shell pkg-config --cflags 3rd-lib)
+
+# pkg-config --libs
+#3RD_LIBS= $(shell pkg-config --libs 3rd-lib)
+
+# implementation
+
+$(OBJ)/%.o: $(SRC)/%.c $(HEADERS)
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@ 
+
+$(DBJ)/%.o: $(SRC)/%.c $(HEADERS)
+	$(CC) $(CDEBUG) $(INCLUDES) -c $< -o $@
+
+.PHONY: clean
+
+all: debug release
+
+release: pre_check $(BIN)
+
+$(BIN): $(BIN_OBJS)
+	$(CC) -o $(BIN) $(BIN_OBJS) $(LDFLAG) $(LIBS)
+	@echo $$(($$(cat $(BLD_NUM)) + 1)) > $(BLD_NUM)
+
+debug: pre_check $(DBG)
+
+$(DBG): $(DBG_OBJS)
+	$(CC) -o $(DBG) $(DBG_OBJS) $(LDFLAG) $(LIBS)
+
+$(VER_FILE): $(filter-out $(VER_FILE),$(SOURCES)) $(HEADERS)
+	@touch $(VER_FILE)
+
+pre_check:
+	@if ! test -f $(SRC); then mkdir -p $(SRC); fi
+	@if ! test -f $(INC); then mkdir -p $(INC); fi
+	@if ! test -f $(OBJ); then mkdir -p $(OBJ); fi
+#	@if not exist $(OBJ) (mkdir $(OBJ))
+	@if ! test -f $(DBJ); then mkdir -p $(DBJ); fi
+#	@if not exist $(DBJ)\nul (mkdir $(DBJ))
+	@if ! test -f $(DXY); then mkdir -p $(DXY); fi
+	@if ! test -f $(BLD); then mkdir -p $(BLD); fi
+	@if ! test -f $(BLD_NUM); then echo 0 > $(BLD_NUM); fi
+
+clean:
+	rm -f $(BIN_OBJS) $(DBG_OBJS) $(BLD)/* core
