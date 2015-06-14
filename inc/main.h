@@ -39,6 +39,6 @@
 #ifndef UXI_MAIN_H
 #define UXI_MAIN_H
 
-#endif // UXI_MAIN_H
+#endif  // UXI_MAIN_H
 
 // main.h

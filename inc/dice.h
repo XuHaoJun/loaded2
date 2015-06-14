@@ -41,11 +41,8 @@
 
 #include <stdint.h>
 
-typedef struct
-{
-    uint32_t (* roll)(uint32_t);
-} Dice;
+typedef struct { uint32_t (*roll)(uint32_t); } Dice;
 
-#endif // UXI_DICE_H
+#endif  // UXI_DICE_H
 
 // dice.h

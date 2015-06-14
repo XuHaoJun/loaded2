@@ -34,7 +34,7 @@ LIBS=$(SDL_LIBS) $(SDL_IMAGE) $(SDL_TTF)
 
 #LIBS=$(GTK_LIBS) -lstdc++
 
-CC=clang
+CC=gcc
 
 CFLAGS= -std=c11 -O3 -Wall -Wextra -D_GNU_SOURCE -DNDEBUG $(VER_INFO) $(3RD_CFLAGS)
 CDEBUG= -std=c11 -g -O0 -Wall -Wextra -D_GNU_SOURCE $(VER_INFO) $(3RD_CFLAGS)
@@ -77,12 +77,12 @@ SDL_IMAGE=-lSDL2_image
 # implementation
 
 $(OBJ)/%.o: $(SRC)/%.c $(HEADERS)
-	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@ 
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 $(DBJ)/%.o: $(SRC)/%.c $(HEADERS)
 	$(CC) $(CDEBUG) $(INCLUDES) -c $< -o $@
 
-.PHONY: clean, run, all, debug, release
+.PHONY: clean, run, all, debug, release, format
 
 all: debug release
 
@@ -99,6 +99,9 @@ $(DBG): $(DBG_OBJS)
 
 $(VER_FILE): $(filter-out $(VER_FILE),$(SOURCES)) $(HEADERS)
 	@touch $(VER_FILE)
+
+format:
+	clang-format -i $(SOURCES) $(HEADERS)
 
 pre_check:
 	@if ! test -f $(SRC); then mkdir -p $(SRC); fi

@@ -43,96 +43,88 @@
 
 #include <SDL2/SDL.h>
 
-typedef struct
-{
-    char * name_;
+typedef struct {
+  char* name_;
 
-    SDL_Rect rect_;
-    SDL_Texture * texture_;
+  SDL_Rect rect_;
+  SDL_Texture* texture_;
 } Sprite;
 
-typedef struct Laser
-{
-    bool visible_;
+typedef struct Laser {
+  bool visible_;
 
-    int velocity_;
+  int velocity_;
 
-    int idx;
+  int idx;
 
-    SDL_Rect box_;
+  SDL_Rect box_;
 
-    Sprite * sprite_;
+  Sprite* sprite_;
 
-    struct Laser * next_;
+  struct Laser* next_;
 } Laser;
 
-typedef struct
-{
-    bool visible_;
+typedef struct {
+  bool visible_;
 
-    int velocity_;
+  int velocity_;
 
-    int velocitx_;
+  int velocitx_;
 
-    SDL_Rect box_;
+  SDL_Rect box_;
 
-    Sprite * sprite_;
+  Sprite* sprite_;
 } Meteor;
 
-typedef struct
-{
-    Laser * lasers_;
-    Meteor * meteors_;
+typedef struct {
+  Laser* lasers_;
+  Meteor* meteors_;
 } RecycleBin;
 
-typedef struct
-{
-    char * name_;
+typedef struct {
+  char* name_;
 
-    int obj_counts_;
-    int sprite_counts_;
+  int obj_counts_;
+  int sprite_counts_;
 
-    SDL_Rect box_;
+  SDL_Rect box_;
 
-    Laser * lasers_;
-    Meteor * meteors_;
-    Sprite * sprite_;
-    Sprite ** meteor_sprites_;
+  Laser* lasers_;
+  Meteor* meteors_;
+  Sprite* sprite_;
+  Sprite** meteor_sprites_;
 } Scene;
 
-typedef struct
-{
-    bool alive;
-    int health;
-    int num_life;
+typedef struct {
+  bool alive;
+  int health;
+  int num_life;
 
-    SDL_Point position_;
+  SDL_Point position_;
 
-    SDL_Rect hitbox_[2];
+  SDL_Rect hitbox_[2];
 
-    Sprite * laser_sprites_[7];
-    Sprite * damages_[3];
-    Sprite * fire_[8];
-    Sprite * sprite_;
+  Sprite* laser_sprites_[7];
+  Sprite* damages_[3];
+  Sprite* fire_[8];
+  Sprite* sprite_;
 } Wings;
 
-typedef struct
-{
-    int count_;
+typedef struct {
+  int count_;
 
-    Wings * wings;
+  Wings* wings;
 } Swarm;
 
-typedef struct
-{
-    void (* init)(void);
-    void (* over)(void);
-    void (* start)(void);
+typedef struct {
+  void (*init)(void);
+  void (*over)(void);
+  void (*start)(void);
 
-    Wings * wings;
-    Scene * scene;
+  Wings* wings;
+  Scene* scene;
 } Game;
 
-#endif // UXI_GAME_H
+#endif  // UXI_GAME_H
 
 // game.h

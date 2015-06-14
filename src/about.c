@@ -44,10 +44,7 @@
 static void version_(void);
 
 // 宣告一個公開的 AboutObject 物件，並初始化
-About about = 
-{
-    version_
-}; // about
+About about = {version_};  // about
 
 /**
  *  Display the version info. in the Proj. 0.0.0b0 format.
@@ -56,16 +53,9 @@ About about =
  *  @return none.
  *  @since  0.1.0
  **/
-void version_(void)
-{
-    printf
-    (
-        "%s %d.%d.%db%d, %s, %s\n",
-        UXI_STR(PRJ_NAME),
-        VER_MAJOR, VER_MINOR, VER_PATCH, VER_BUILD,
-        UXI_STR(VER_BTIME),
-        UXI_STR(VER_BDATE)
-    );
-} // version_()
+void version_(void) {
+  printf("%s %d.%d.%db%d, %s, %s\n", UXI_STR(PRJ_NAME), VER_MAJOR, VER_MINOR,
+         VER_PATCH, VER_BUILD, UXI_STR(VER_BTIME), UXI_STR(VER_BDATE));
+}  // version_()
 
 // about.c

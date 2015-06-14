@@ -1,0 +1,4 @@
+bin/*
+!bin/img
+obj/**/*
+!obj/.gitkeep

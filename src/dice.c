@@ -52,10 +52,7 @@ static uint32_t roll_(uint32_t);
  *
  *  @since  0.1.0
  **/
-Dice dice =
-{
-    roll_
-}; // dice
+Dice dice = {roll_};  // dice
 
 // 函數 (方法) 的實作 (implementations)
 
@@ -66,13 +63,12 @@ Dice dice =
  *  @return a random number between min and max.
  *  @since  0.1.0
  **/
-uint32_t roll_(uint32_t max)
-{
-    uint32_t points;
+uint32_t roll_(uint32_t max) {
+  uint32_t points;
 
-    points = (uint32_t)((rand() / ((double)RAND_MAX + 1)) * max);
+  points = (uint32_t)((rand() / ((double)RAND_MAX + 1)) * max);
 
-    return points;
-} // roll_()
+  return points;
+}  // roll_()
 
 // dice.c

@@ -41,20 +41,19 @@
 
 #include "main.h"
 
-int main(int argc, char *argv[])
-{
-//    extern About about;
-    extern Game game;
+int main(int argc, char *argv[]) {
+  //    extern About about;
+  extern Game game;
 
-    game.init();                 // 初始化環境
+  game.init();  // 初始化環境
 
-    game.start();                // 遊戲開始
+  game.start();  // 遊戲開始
 
-    game.over();                 // 遊戲結束
+  game.over();  // 遊戲結束
 
-//    about.version();             // 顯示程式版本資訊
+  //    about.version();             // 顯示程式版本資訊
 
-    return 0;
-} // main()
+  return 0;
+}  // main()
 
 // main.c

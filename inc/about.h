@@ -38,14 +38,11 @@
 #ifndef UXI_ABOUT_H
 #define UXI_ABOUT_H
 
-#define UXI_STR_EXPAND(str)   #str
-#define UXI_STR(str)          UXI_STR_EXPAND(str)
+#define UXI_STR_EXPAND(str) #str
+#define UXI_STR(str) UXI_STR_EXPAND(str)
 
-typedef struct About
-{
-    void (* version)(void);
-} About;
+typedef struct About { void (*version)(void); } About;
 
-#endif // UXI_ABOUT_H
+#endif  // UXI_ABOUT_H
 
 // about.h
