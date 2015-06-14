@@ -224,7 +224,9 @@ void update_meteors_(void) {
     meteors[i].box_.y += meteors[i].velocity_;
     meteors[i].box_.x += meteors[i].velocitx_;
 
-    if (meteors[i].box_.y > scene->box_.h) {
+    if (meteors[i].box_.y > scene->box_.h ||
+        (meteors[i].box_.x + meteors[i].box_.w) < 0 ||
+        meteors[i].box_.x > scene->box_.w) {
       int tmp = meteors[i].box_.x / 256;
 
       meteors[i].box_.x = dice.roll(128) + tmp * 256;
@@ -233,6 +235,7 @@ void update_meteors_(void) {
 
       if ((dice.roll(100) % 2) == 0) {
         meteors[i].visible_ = true;
+        meteors[i].velocitx_ *= -1;
       }  // fi
       else {
         meteors[i].visible_ = false;
