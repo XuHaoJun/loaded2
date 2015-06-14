@@ -51,6 +51,9 @@ typedef struct {
 } Sprite;
 
 typedef struct Laser {
+  bool body_enable;
+  bool exploding;
+  int exploding_idx;
   bool visible_;
 
   int velocity_;
@@ -99,12 +102,13 @@ typedef struct {
   bool alive;
   int health;
   int num_life;
+  Uint32 shot_laser_next_time;
 
   SDL_Point position_;
 
   SDL_Rect hitbox_[2];
 
-  Sprite* laser_sprites_[7];
+  Sprite* laser_sprites_[11];
   Sprite* damages_[3];
   Sprite* fire_[8];
   Sprite* sprite_;

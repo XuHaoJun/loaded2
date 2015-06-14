@@ -174,13 +174,23 @@ void update_lasers_(void) {
 
   laser = game.scene->lasers_;
 
+  Uint32 now;
+  now = SDL_GetTicks();
+
   while (laser != (Laser *)NULL) {
-    laser->idx = (laser->idx + 1) % 7;
-    laser->sprite_ = game.wings->laser_sprites_[laser->idx];
+    if (laser->exploding) {
+      if (laser->exploding_idx < 11) {
+        laser->sprite_ = game.wings->laser_sprites_[laser->exploding_idx];
+      }
+      laser->exploding_idx = laser->exploding_idx + 1;
+    } else {
+      laser->idx = (laser->idx + 1) % 7;
+      laser->sprite_ = game.wings->laser_sprites_[laser->idx];
+    }
 
     laser->box_.y -= laser->velocity_;
 
-    if (laser->box_.y < 0) {
+    if (laser->box_.y < 0 || laser->exploding_idx >= 11) {
       Laser *tmp = laser->next_;
 
       laser_destroy_(laser);
@@ -268,13 +278,19 @@ void update_scene_(void) {
 
   laser = scene->lasers_;
 
+  Uint32 now;
+  now = SDL_GetTicks();
+
   while (laser != (Laser *)NULL) {
     dst.x = laser->box_.x;
     dst.y = laser->box_.y;
     dst.w = laser->box_.w;
     dst.h = laser->box_.h;
 
-    SDL_RenderCopy(renderer_, laser->sprite_->texture_, (SDL_Rect *)NULL, &dst);
+    if (laser->visible_) {
+      SDL_RenderCopy(renderer_, laser->sprite_->texture_, (SDL_Rect *)NULL,
+                     &dst);
+    }
 
     laser = laser->next_;
   }  // od
@@ -539,12 +555,12 @@ void collide_lasers_(void) {
     laser = game.scene->lasers_;
 
     while (laser != (Laser *)NULL) {
-      if (gjk_collides_(&laser->box_, &meteors[i].box_)) {
-        Laser *tmp = laser->next_;
+      if (laser->body_enable && gjk_collides_(&laser->box_, &meteors[i].box_)) {
+        laser->exploding = true;
+        laser->velocity_ = 0;
+        laser->body_enable = false;
 
-        laser_destroy_(laser);
-
-        laser = tmp;
+        laser = laser->next_;
 
         meteors[i].visible_ = false;
       }  // fi
@@ -661,6 +677,9 @@ void init_laser_(Scene *scene) {
 
   laser->velocity_ = 5;
   laser->visible_ = true;
+  laser->body_enable = true;
+  laser->exploding = false;
+  laser->exploding_idx = 7;
 }  // init_laser_()
 
 /**
@@ -837,7 +856,7 @@ Wings *init_wings_(void) {
   }  // od
 
   // 設定 Wings 的雷射圖檔
-  for (int i = 1; i < 8; ++i) {
+  for (int i = 1; i < 12; ++i) {
     sprintf(file_png, "img/laserBlue%02d.png", i);
     wings->laser_sprites_[(i - 1)] = load_image_(file_png);
   }  // od
@@ -862,6 +881,7 @@ Wings *init_wings_(void) {
   wings->alive = true;
   wings->health = 100;
   wings->num_life = 3;
+  wings->shot_laser_next_time = SDL_GetTicks();
 
   return wings;
 }  // init_wings_()
@@ -896,7 +916,7 @@ void game_over_(void) {
   Wings *wings = (Wings *)game.wings;
   Scene *scene = (Scene *)game.scene;
 
-  for (int i = 0; i < 7; ++i) {
+  for (int i = 0; i < 11; ++i) {
     SDL_DestroyTexture(wings->laser_sprites_[i]->texture_);
     free(wings->laser_sprites_[i]);
   }  // od
@@ -1074,7 +1094,10 @@ void game_loop_(void) {
       wings->position_.x += 10;
     }
     if (space) {
-      init_laser_(scene);
+      if (wings->shot_laser_next_time <= SDL_GetTicks()) {
+        init_laser_(scene);
+        wings->shot_laser_next_time += 400;
+      }
     }
     update_lasers_();   // 移動 lasers 的位置
     update_meteors_();  // 捲動 meteors 的位置

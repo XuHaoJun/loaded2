@@ -34,7 +34,7 @@ LIBS=$(SDL_LIBS) $(SDL_IMAGE) $(SDL_TTF)
 
 #LIBS=$(GTK_LIBS) -lstdc++
 
-CC=gcc
+CC=clang
 
 CFLAGS= -std=c11 -O3 -Wall -Wextra -D_GNU_SOURCE -DNDEBUG $(VER_INFO) $(3RD_CFLAGS)
 CDEBUG= -std=c11 -g -O0 -Wall -Wextra -D_GNU_SOURCE $(VER_INFO) $(3RD_CFLAGS)
